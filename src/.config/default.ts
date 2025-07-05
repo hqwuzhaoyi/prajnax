@@ -5,16 +5,16 @@ import type { ThemeConfig } from '~/types'
 
 export const defaultConfig: ThemeConfig = {
   site: {
-    title: '活版印字',
-    subtitle: 'Typography',
-    author: 'Moeyua',
-    description: 'Rediscory the beauty of typography',
+    title: 'PrajnaX\'s Blog',
+    subtitle: 'Coding, Technology, and Life',
+    author: 'PrajnaX',
+    description: 'A blog about programming, technology, and life.',
     website: 'https://astro-theme-typography.vercel.app/',
     pageSize: 5,
     socialLinks: [
       {
         name: 'github',
-        href: 'https://github.com/moeyua/astro-theme-typography',
+        href: 'https://github.com/hqwuzhaoyi',
       },
       {
         name: 'rss',
@@ -22,17 +22,21 @@ export const defaultConfig: ThemeConfig = {
       },
       {
         name: 'twitter',
-        href: 'https://github.com/moeyua/astro-theme-typography',
+        href: 'https://twitter.com/hqwuzhaoyi',
       },
       {
         name: 'mastodon',
-        href: 'https://github.com/moeyua/astro-theme-typography',
+        href: 'https://mastodon.social/@prajnax',
       },
     ],
     navLinks: [
       {
         name: 'Posts',
         href: '/',
+      },
+      {
+        name: 'Notes',
+        href: '/notes',
       },
       {
         name: 'Archive',
@@ -46,6 +50,7 @@ export const defaultConfig: ThemeConfig = {
         name: 'About',
         href: '/about',
       },
+
     ],
     categoryMap: [{ name: '胡适', path: 'hu-shi' }],
     footer: [

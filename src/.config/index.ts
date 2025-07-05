@@ -12,7 +12,10 @@ function deepMerge<T>(target: T, source: DeepPartial<T>): T {
     const targetValue = output[typedKey]
 
     if (sourceValue !== undefined) {
-      if (typeof sourceValue === 'object' && !Array.isArray(sourceValue)) {
+      if (key === 'navLinks' && Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+        output[typedKey] = [...targetValue, ...sourceValue] as T[keyof T]
+      }
+      else if (typeof sourceValue === 'object' && !Array.isArray(sourceValue)) {
         output[typedKey] = deepMerge(
           targetValue,
           sourceValue as DeepPartial<T[keyof T]>,

@@ -1,0 +1,56 @@
+---
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+import type { Note } from '~/types'
+import { formatDate, getNotes } from '~/utils'
+
+const notes = await getNotes(true)
+
+const yearMap = getYearMap(notes)
+
+interface ListItem {
+  title: string
+  href: string
+  date: string
+}
+
+function getYearMap(notes: Note[]) {
+  const result = new Map<number, ListItem[]>()
+  for (const note of notes) {
+    const year = (note.data.pubDate ?? new Date()).getFullYear()
+    const notes = result.get(year) ?? []
+    notes.push(getListItem(note))
+    result.set(year, notes)
+  }
+  return Array.from(result.entries())
+}
+
+function getListItem(note: Note): ListItem {
+  return {
+    title: note.data.title,
+    href: `/notes/${note.id}/`,
+    date: formatDate(note.data.pubDate, 'MM-DD'),
+  }
+}
+---
+
+<LayoutDefault>
+  <div flex="~ col gap-4">
+    {
+      yearMap.map(([year, notes]) => (
+        <section>
+          <h2 class="post-title">{year}</h2>
+          <ul class="pl-6" flex="~ col gap-4">
+            {notes.map(({ title, href, date }) => (
+              <li>
+                <h3 class="post-title">
+                  <a href={href}>{title}</a>
+                </h3>
+                <time>{date}</time>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</LayoutDefault>

@@ -42,6 +42,27 @@ export async function getPosts(isArchivePage = false) {
   return posts
 }
 
+export async function getNotes(isArchivePage = false) {
+  const notes = await getCollection('notes')
+
+  notes.sort((a, b) => {
+    if (isArchivePage) {
+      return dayjs(a.data.pubDate).isBefore(dayjs(b.data.pubDate)) ? 1 : -1
+    }
+
+    const aDate = a.data.modDate ? dayjs(a.data.modDate) : dayjs(a.data.pubDate)
+    const bDate = b.data.modDate ? dayjs(b.data.modDate) : dayjs(b.data.pubDate)
+
+    return aDate.isBefore(bDate) ? 1 : -1
+  })
+
+  if (import.meta.env.PROD) {
+    return notes.filter(note => note.data.draft !== true)
+  }
+
+  return notes
+}
+
 const parser = new MarkdownIt()
 export function getPostDescription(post: Post) {
   if (post.data.description) {

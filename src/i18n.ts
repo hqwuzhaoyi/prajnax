@@ -7,6 +7,7 @@ export const LANGUAGES = {
     Tags: '标签',
     About: '关于',
     Links: '链接',
+    Notes: '手记',
 
     posted_at: '发布于',
     updated_at: '更新于',
