@@ -1,0 +1,65 @@
+---
+title: nextJest moduleNameMapper doesn't work
+pubDate: 2024-01-06
+modDate: 2024-01-06
+categories: ["技术", "Next.js", "Jest"]
+description: "记录在 Next.js 中使用 Jest 测试时遇到的 moduleNameMapper 不生效的问题及解决方法"
+slug: next-jest-moduleNameMapper-not-work
+draft: false
+---
+
+# nextJest moduleNameMapper doesn't work
+
+记一个神奇的 jest 问题
+
+```js
+jest.mock("lib/store", () => ({
+  jotaiStore: jest.fn(),
+}));
+
+```
+
+这样写会报错
+
+```text
+Cannot find module 'lib/store' from 'atoms/imagePreview.test.ts'
+```
+
+但是也在 jext.config.js 内写入了，打印了最后导出的配置，发现并没有成功加载
+
+```js
+const nextJest = require("next/jest");
+
+const createJestConfig = nextJest({
+  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+  dir: "./",
+});
+
+// Add any custom config to be passed to Jest
+const customJestConfig = {
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testEnvironment: "jest-environment-jsdom",
+  globals: {
+    "ts-jest": {
+      tsconfig: "<rootDir>/tsconfig.json", // 请替换为实际的路径
+    },
+  },
+  moduleNameMapper: {
+    "^lib/(.*)$": "<rootDir>/lib/$1",
+    "^app/(.*)$": "<rootDir>/app/$1",
+    "^atoms/(.*)$": "<rootDir>/atoms/$1",
+    "^components/(.*)$": "<rootDir>/components/$1",
+    "^hooks/(.*)$": "<rootDir>/hooks/$1",
+  },
+};
+
+// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
+module.exports = createJestConfig(customJestConfig);
+
+```
+
+最后发现原因：
+
+在配置 `jest.config.js` 时候，因为是 next jest 版本的 swc，直接在 `createJestConfig` 内部定义 `moduleNameMapper` 是不生效的，要配置在 `customJestConfig` 内部
+
+希望对碰到此问题的人有所帮助

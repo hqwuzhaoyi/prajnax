@@ -1,0 +1,68 @@
+---
+title: wsl2内ubuntu如何使用nfs挂载
+pubDate: 2023-08-01
+modDate: 2023-08-01
+categories: ["技术", "WSL2", "NFS"]
+description: "记录在 WSL2 中配置 NFS 共享文件夹的过程和遇到的问题"
+slug: wsl2-nfs
+draft: false
+---
+
+安装[[nfs]]
+
+```Shell
+sudo apt update
+sudo apt install nfs-common
+```
+
+接下来就可以直接挂载了
+
+```Shell
+# 创建挂载文件夹
+sudo mkdir /mnt/nfs_share
+
+# 测试是否能够挂载上去
+sudo mount -t nfs 192.168.2.208:/mnt/mnt2/media /mnt/nfs_share
+
+```
+
+重启后也能挂载
+```shell
+vim /etc/fstab
+```
+
+```text
+192.168.2.208:/mnt/mnt2/media /mnt/nfs_share nfs defaults 0 0
+```
+
+但是，在[[wsl]]内部，因为`nfs-server`原因挂载会报错
+
+```
+protocol not supported
+```
+
+找到了相关 Issue
+[Can't mount NFS from within WSL2 Ubuntu 22.04 · Issue #9790 · microsoft/WSL · GitHub](https://github.com/microsoft/WSL/issues/9790)
+直接挂载在普通服务器上可以，确认了是服务器问题，我用的是 [Truenas](Truenas.md)
+
+查看`nfs`服务配置
+
+![](https://my-img.prajnax.com/wuzhaoyi/2023/08/6931327f8606b156ed37403ffdefea07.png)
+
+
+``` shell
+vim /etc/exports
+```
+
+对文件目录增加 `insecure`
+
+```
+"/mnt/mnt2/media"\
+	*(sec=sys,rw,insecure,no_subtree_check)
+```
+
+现在继续使用 `mount`
+
+```shell
+sudo mount -t nfs 192.168.2.208:/mnt/mnt2/media /mnt/nfs_share
+```
